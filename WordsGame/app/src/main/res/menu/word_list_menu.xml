@@ -4,13 +4,9 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/timer"
-        android:title="timer"
-        android:actionLayout="@layout/action_bar_timer"/>
-
-    <item
         android:id="@+id/finish"
         android:title="finish"
-        android:icon="@android:drawable/ic_media_next"
+        android:icon="@drawable/finish"
         custom:showAsAction="always"/>
+
 </menu>

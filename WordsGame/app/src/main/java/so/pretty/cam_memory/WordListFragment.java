@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,8 +23,7 @@ import butterknife.InjectView;
  */
 public class WordListFragment extends Fragment {
 
-    public static final String ARGUMENT_WORD_COUNT = "WORD_COUNT";
-    public static final int DELTA_TIME = 300;
+    public static final long DELTA_TIME = 240;
 
     @InjectView(R.id.word_list)
     ListView wordList;
@@ -33,27 +34,54 @@ public class WordListFragment extends Fragment {
     private Runnable r;
     private int pauseTime;
     private int remaining;
-
-    public WordListFragment newInstance(final Context context, final int wordCount) {
-        Bundle args = new Bundle();
-        args.putInt(ARGUMENT_WORD_COUNT, wordCount);
-        return (WordListFragment) Fragment.instantiate(context, WordListFragment.class.getName(), args);
-    }
+    private View timerContainer;
+    private TextView timerSub;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_word_list, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        MainActivity activity = (MainActivity) getActivity();
+        ActionBar supportActionBar = activity.getSupportActionBar();
+        supportActionBar.setDisplayHomeAsUpEnabled(true);
+        supportActionBar.setDisplayShowCustomEnabled(true);
+        supportActionBar.setCustomView(R.layout.action_bar_timer);
+
+        View customView = supportActionBar.getCustomView();
+        timer = (TextView) customView.findViewById(R.id.timer);
+        timerContainer = customView.findViewById(R.id.timer_container);
+        timerSub = (TextView) customView.findViewById(R.id.timer_sub);
+
+        timerContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (timer.getVisibility() == View.VISIBLE) {
+                    timer.setVisibility(View.GONE);
+                    timerSub.setText("Показать таймер");
+                } else {
+                    timer.setVisibility(View.VISIBLE);
+                    timerSub.setText("Скрыть");
+                }
+            }
+        });
+
         ButterKnife.inject(this, getActivity());
+
         final Game game = ((WordGameOwner) getActivity()).getWordGameManager().getGame();
+        Log.d("Game", game.getWords().toString());
+
         wordList.setAdapter(new WordListAdapter(game.getWords(), game.isRandomTextParams()));
+
         handler = new Handler();
-        this.pauseTime = game.getTime();
+
+        this.pauseTime = game.getTime() * 1000;
     }
 
     @Override
@@ -63,6 +91,7 @@ public class WordListFragment extends Fragment {
         r = new Runnable() {
             @Override
             public void run() {
+                Log.d(WordListFragment.class.getName(), "Tick!");
                 long currentTime = System.currentTimeMillis();
                 long elapsed = currentTime - startTime;
                 remaining = (int) (pauseTime - elapsed);
@@ -70,17 +99,20 @@ public class WordListFragment extends Fragment {
                     showNextScreen();
                     return;
                 }
-                int minutes = remaining / 60;
-                int seconds = remaining % 60;
-                timer.setText(String.format("{} : {}", minutes, seconds));
-                handler.postDelayed(this, DELTA_TIME);
+                int minutes = remaining / 60000;
+                int seconds = (remaining / 1000) % 60;
+                timer.setText(String.format("%s:%s", minutes, seconds));
+                handler.postDelayed(r, DELTA_TIME);
             }
         };
-        handler.postDelayed(r, DELTA_TIME);
+        handler.post(r);
     }
 
     private void showNextScreen() {
+        Log.d(WordListFragment.class.getName(), "showNextScreen");
         handler.removeCallbacks(r);
+        WordGameManager wordGameManager = ((MainActivity) getActivity()).getWordGameManager();
+        wordGameManager.showCompareScreen();
     }
 
     @Override
@@ -91,18 +123,26 @@ public class WordListFragment extends Fragment {
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.word_list_menu, menu);
-        MenuItem timerMenuItem = menu.findItem(R.id.timer);
-
-        this.timer = (TextView) timerMenuItem.getActionView().findViewById(R.id.timer);
-
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        boolean b = super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            getActivity().onBackPressed();
+            return true;
+        } else {
+            showNextScreen();
+        }
+        return b;
     }
 
     public static Fragment newInstance(final Context context) {

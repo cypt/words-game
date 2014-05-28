@@ -8,7 +8,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
         <RadioGroup
             android:id="@+id/mode"
@@ -20,28 +22,41 @@
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Слова будут показаны" />
+                android:layout_marginLeft="10dp"
+                android:text="Слова будут показаны"
+                android:textSize="20dp"/>
 
             <RadioButton
                 android:id="@+id/all"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="Все сразу"/>
 
-            <RadioGroup
+            <RadioButton
                 android:id="@+id/one_by_one"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="По-очереди" />
 
         </RadioGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ff858585"/>
 
         <RadioGroup
             android:id="@+id/difficult_level"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Сложность"
+                android:textSize="20dp"/>
 
             <RadioButton
                 android:id="@+id/newbie"
@@ -80,8 +95,7 @@
             android:id="@+id/start"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Начать"
-            android:onClick="start"/>
+            android:text="Начать"/>
 
     </LinearLayout>
 

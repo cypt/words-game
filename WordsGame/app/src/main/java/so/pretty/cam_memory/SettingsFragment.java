@@ -34,6 +34,7 @@ public class SettingsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_settings, container, false);
     }
 
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -103,6 +104,13 @@ public class SettingsFragment extends Fragment {
                 }
             });
         }
+
+        getView().findViewById(R.id.start).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                start(view);
+            }
+        });
     }
 
     public void start(View view) {
@@ -115,19 +123,19 @@ public class SettingsFragment extends Fragment {
         if (level == Level.NEWBIE) {
             game.setTime(120);
             game.setRandomTextParams(false);
-            game.setWords(WordHelper.getRandomWords(applicationContext, 20));
+            game.setWords(DatabaseHelper.getRandomWords(applicationContext, 20));
         } else if (level == Level.ADVANCED) {
             game.setTime(120);
             game.setRandomTextParams(false);
-            game.setWords(WordHelper.getRandomWords(applicationContext, 20));
+            game.setWords(DatabaseHelper.getRandomWords(applicationContext, 20));
         } else if (level == Level.CAESAR) {
             game.setTime(120);
             game.setRandomTextParams(false);
-            game.setWords(WordHelper.getRandomWords(applicationContext, 20));
+            game.setWords(DatabaseHelper.getRandomWords(applicationContext, 20));
         } else if (level == Level.SHERLOCK) {
             game.setTime(120);
             game.setRandomTextParams(false);
-            game.setWords(WordHelper.getRandomWords(applicationContext, 20));
+            game.setWords(DatabaseHelper.getRandomWords(applicationContext, 20));
         }
 
         ((WordGameOwner)getActivity()).getWordGameManager().startNewGame(game);

@@ -1,15 +1,14 @@
 package so.pretty.cam_memory;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
 
 
 public class MainActivity extends ActionBarActivity implements WordGameOwner {
@@ -21,8 +20,13 @@ public class MainActivity extends ActionBarActivity implements WordGameOwner {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         wordGameManager = new WordGameManagerImpl(this);
-        wordGameManager.showSettingsScreen();
 
+        if (DatabaseHelper.isEmpty(this)) {
+            DialogFragment splash = (DialogFragment) SplashScreenFragment.newInstance(this);
+            splash.show(getSupportFragmentManager(), "splash_screen");
+        } else {
+            wordGameManager.showSettingsScreen();
+        }
     }
 
 
@@ -63,6 +67,15 @@ public class MainActivity extends ActionBarActivity implements WordGameOwner {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             return rootView;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
         }
     }
 }

@@ -67,6 +67,8 @@ public class WordListAdapter extends BaseAdapter {
             textView.setTextSize(18);
         }
 
+        textView.setText(words.get(position));
+
         return convertView;
     }
 }

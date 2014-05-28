@@ -17,7 +17,7 @@ public class WordGameManagerImpl implements WordGameManager {
     }
 
     private FragmentTransaction beginTransaction() {
-        return mainActivity.getSupportFragmentManager().beginTransaction();
+        return mainActivity.getSupportFragmentManager().beginTransaction().addToBackStack(null);
     }
 
     @Override
